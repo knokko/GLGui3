@@ -63,8 +63,6 @@ public class GLGuiWindow extends GuiWindow {
 
 	private float mouseDX;
 	private float mouseDY;
-	
-	private boolean needsExtraRender;
 
 	public GLGuiWindow() {
 		textureLoader = new GLGuiTextureLoader();
@@ -75,21 +73,6 @@ public class GLGuiWindow extends GuiWindow {
 	public GLGuiWindow(GuiComponent mainComponent) {
 		this();
 		this.mainComponent = mainComponent;
-	}
-	
-	@Override
-	public void markChange() {
-		super.markChange();
-		needsExtraRender = true;
-	}
-	
-	@Override
-	public void render() {
-		super.render();
-		if (needsExtraRender) {
-			needsRender = true;
-			needsExtraRender = false;
-		}
 	}
 
 	protected void ensureOnMainThread() {
@@ -284,6 +267,7 @@ public class GLGuiWindow extends GuiWindow {
 		guiRenderer.start();
 		mainComponent.render(guiRenderer);
 		guiRenderer.stop();
+		GLFW.glfwSwapBuffers(windowID);
 	}
 
 	@Override
@@ -306,7 +290,6 @@ public class GLGuiWindow extends GuiWindow {
 			if (listener == null || !listener.preRunLoop()) {
 				update();
 				render();
-				GLFW.glfwSwapBuffers(windowID);
 				if (listener != null)
 					listener.postRunLoop();
 			}
