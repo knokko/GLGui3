@@ -139,20 +139,33 @@ public class GLGuiWindow extends GuiWindow {
 		this.insetTop = topBuffer.get();
 		this.insetRight = rightBuffer.get();
 		this.insetBottom = bottomBuffer.get();
-		GLFW.glfwSetWindowSize(windowID, this.innerWidth - this.insetLeft - this.insetRight,
-				this.innerHeight - this.insetTop - this.insetBottom);
+		this.innerWidth -= this.insetLeft;
+		this.innerWidth -= this.insetRight;
+		this.innerHeight -= this.insetBottom;
+		this.innerHeight -= this.insetTop;
+		GLFW.glfwSetWindowSize(windowID, this.innerWidth, this.innerHeight);
 		GLFW.glfwMakeContextCurrent(windowID);
 		GL.createCapabilities();
 		// GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
 		guiRenderer.init();
 		GLFW.glfwSetWindowSizeCallback(windowID, (long windowID, int width, int height) -> {
-			this.innerWidth = width - this.insetLeft - this.insetRight;
-			this.innerHeight = height - this.insetBottom - this.insetTop;
+			this.innerWidth = width;
+			this.innerHeight = height;
 			markChange();
 		});
+		IntBuffer positionBufferX = BufferUtils.createIntBuffer(1);
+		IntBuffer positionBufferY = BufferUtils.createIntBuffer(1);
+		GLFW.glfwGetWindowPos(windowID, positionBufferX, positionBufferY);
+		this.positionX = positionBufferX.get() - this.insetLeft;
+		this.positionY = positionBufferY.get() - this.insetTop;
+		System.out.println("Window position is (" + positionX + "," + positionY + ")");
 		GLFW.glfwSetWindowPosCallback(windowID, (long windowID, int newX, int newY) -> {
-			this.positionX = newX;
-			this.positionY = newY;
+			
+			// 32000 will be returned when the window is iconified (hidden)
+			if (newX != -32000 && newY != -32000) {
+				this.positionX = newX - this.insetLeft;
+				this.positionY = newY - this.insetTop;
+			}
 		});
 		GLFW.glfwSetCharCallback(windowID, (long windowID, int codePoint) -> {
 			if (codePoint > Character.MAX_VALUE) {
