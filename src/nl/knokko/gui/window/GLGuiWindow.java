@@ -208,17 +208,12 @@ public class GLGuiWindow extends GuiWindow {
 			}
 		});
 		GLFW.glfwSetCursorPosCallback(windowID, (long windowID, double newX, double newY) -> {
-			if (newX < 0 || newY < 0 || newX >= this.innerWidth || newY >= this.innerHeight) {
-				this.mouseX = Float.NaN;
-				this.mouseY = Float.NaN;
-			} else {
-				float newMouseX = (float) (newX / this.innerWidth);
-				float newMouseY = 1f - (float) (newY / this.innerHeight);
-				this.mouseDX = newMouseX - this.mouseX;
-				this.mouseDY = newMouseY - this.mouseY;
-				this.mouseX = newMouseX;
-				this.mouseY = newMouseY;
-			}
+			float newMouseX = (float) (newX / this.innerWidth);
+			float newMouseY = 1f - (float) (newY / this.innerHeight);
+			this.mouseDX = newMouseX - this.mouseX;
+			this.mouseDY = newMouseY - this.mouseY;
+			this.mouseX = newMouseX;
+			this.mouseY = newMouseY;
 			markChange();
 		});
 		GLFW.glfwSetCursorEnterCallback(windowID, (long windowID, boolean entered) -> {
@@ -342,12 +337,18 @@ public class GLGuiWindow extends GuiWindow {
 
 	@Override
 	public float getMouseX() {
-		return this.mouseX;
+		if (this.mouseX >= 0 && this.mouseX < 1)
+			return this.mouseX;
+		else
+			return Float.NaN;
 	}
 
 	@Override
 	public float getMouseY() {
-		return this.mouseY;
+		if (this.mouseY >= 0 && this.mouseY < 1)
+			return this.mouseY;
+		else
+			return this.mouseY;
 	}
 
 	@Override
