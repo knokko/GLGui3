@@ -28,6 +28,7 @@ import java.awt.image.BufferedImage;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.lwjgl.BufferUtils;
@@ -45,7 +46,7 @@ import nl.knokko.gui.window.GLGuiWindow;
 
 import static nl.knokko.gui.shader.GuiShader.GUI_SHADER;
 
-public class GLGuiRenderer implements GuiRenderer {
+public class GLGuiRenderer extends GuiRenderer {
 	
 	private static final float[] QUAD = {0,1, 0,0, 1,1, 1,0};
 	
@@ -123,7 +124,7 @@ public class GLGuiRenderer implements GuiRenderer {
 	}
 
 	@Override
-	public void renderTexture(GuiTexture texture, float minX, float minY, float maxX, float maxY) {
+	void renderTextureNow(GuiTexture texture, float minX, float minY, float maxX, float maxY) {
 		if (minX <= 1 && minY <= 1 && maxX >= 0 && maxY >= 0) {
 			// Don't waste time rendering things that are completely off the screen
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
@@ -136,14 +137,22 @@ public class GLGuiRenderer implements GuiRenderer {
 	}
 
 	@Override
-	public void fill(GuiColor color, float minX, float minY, float maxX, float maxY) {
+	void fillNow(GuiColor color, float minX, float minY, float maxX, float maxY) {
 		renderTexture(getFilledTexture(color), minX, minY, maxX, maxY);
 	}
 
 	@Override
-	public void clear(GuiColor color) {
+	void clearNow(GuiColor color) {
 		GL11.glClearColor(color.getRedF(), color.getGreenF(), color.getBlueF(), color.getAlphaF());
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+	}
+	
+	@Override
+	void renderNow(List<RenderCommand> renderCommands) {
+		start();
+		super.renderNow(renderCommands);
+		stop();
+		GLFW.glfwSwapBuffers(window.getWindowID());
 	}
 	
 	private GuiTexture getFilledTexture(GuiColor color){
