@@ -138,7 +138,7 @@ public class GLGuiRenderer extends GuiRenderer {
 
 	@Override
 	void fillNow(GuiColor color, float minX, float minY, float maxX, float maxY) {
-		renderTexture(getFilledTexture(color), minX, minY, maxX, maxY);
+		renderTextureNow(getFilledTexture(color), minX, minY, maxX, maxY);
 	}
 
 	@Override
