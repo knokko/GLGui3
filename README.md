@@ -1,6 +1,10 @@
 # GLGui3
 The sub library for my Gui library that is required for using Gui with lwjgl 3
 
+# Archived
+This repository is archived beacuse my Gui library is now also archived.
+
+# Installation
 The easiest way to use this library is by downloading 'GLGui3 standalone.jar' and adding it to your build path. 
 That jar contains Gui,GLGui3,lwjgl,lwjgl-glfw and lwjgl-opengl. If you do that, you will have the entire build path ready.
 
